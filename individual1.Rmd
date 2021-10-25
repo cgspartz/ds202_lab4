@@ -1,0 +1,63 @@
+---
+title: "Lab 4"
+author: "Christopher Spartz"
+date: "10/24/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(readxl)
+defense <- read_excel('cyclonesFootball2020.xlsx', sheet='Defensive')
+offense <- read_excel('cyclonesFootball2020.xlsx', sheet='Offensive')
+biography <- read_excel('cyclonesFootball2020.xlsx', sheet='Biography')
+str(defense)
+str(offense)
+str(biography)
+```
+
+## Cleaning the Data
+
+## 1.
+```{r}
+defense$Name <- as.factor(defense$Name)
+offense$Name <- as.factor(offense$Name)
+defense$Opponent_Opponent <- as.factor(defense$Opponent_Opponent)
+offense$Opponent_Opponent <- as.factor(offense$Opponent_Opponent)
+```
+
+
+## 2.
+```{r}
+defClean <- defense %>% mutate(across(where(is.character), as.numeric))
+offClean <- offense %>% mutate(across(where(is.character), as.numeric))
+biography$Weight <- as.numeric(biography$Weight)
+```
+
+## 3.
+```{r}
+bioClean <- biography %>% separate(Height, c('feet', 'inches'), "-", convert = TRUE)
+```
+
+## 4.
+```{r}
+offClean <- offClean %>% group_by(Name, Opponent_Opponent) %>% mutate(gameNum = row_number()) %>% ungroup()
+defClean <- defClean %>% group_by(Name, Opponent_Opponent) %>% mutate(gameNum = row_number()) %>% ungroup()
+str(offClean)
+str(defClean)
+str(bioClean)
+```
+
+
+## Tidying and Exploring
+
+## 1. 
+```{r}
+
+```
+

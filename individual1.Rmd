@@ -61,3 +61,21 @@ str(bioClean)
 
 ```
 
+
+
+
+
+
+
+## 4.
+```{r}
+bioClean <- bioClean %>% separate(Hometown, c('homeCity', 'homeState'), ",")
+```
+
+## 5.
+```{r}
+bioClean %>% count(homeState)
+```
+
+
+

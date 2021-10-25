@@ -293,6 +293,28 @@ str(offClean)</code></pre>
 <div id="section-4" class="section level2">
 <h2>1.</h2>
 </div>
+<div id="section-5" class="section level2">
+<h2>4.</h2>
+<pre class="r"><code>bioClean &lt;- bioClean %&gt;% separate(Hometown, c(&#39;homeCity&#39;, &#39;homeState&#39;), &quot;,&quot;)</code></pre>
+</div>
+<div id="section-6" class="section level2">
+<h2>5.</h2>
+<pre class="r"><code>bioClean %&gt;% count(homeState)</code></pre>
+<pre><code>## # A tibble: 21 × 2
+##    homeState        n
+##    &lt;chr&gt;        &lt;int&gt;
+##  1 &quot; Ariz.&quot;         4
+##  2 &quot; Ark.&quot;          1
+##  3 &quot; Australia&quot;     1
+##  4 &quot; Calif.&quot;        2
+##  5 &quot; Fla.&quot;         14
+##  6 &quot; Ga.&quot;           3
+##  7 &quot; Ill.&quot;          6
+##  8 &quot; Iowa&quot;         42
+##  9 &quot; Kan.&quot;          4
+## 10 &quot; Mich&quot;          1
+## # … with 11 more rows</code></pre>
+</div>
 
 
 

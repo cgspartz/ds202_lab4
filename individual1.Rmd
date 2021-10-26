@@ -58,24 +58,68 @@ str(bioClean)
 
 ## 1. 
 ```{r}
+offCleanStat <- offClean %>% pivot_longer(
+  !c('Name','Opponent_Opponent','gameNum'),
+  names_to="stat",
+  values_to="count",
+  values_drop_na = TRUE
+)
 
+offCleanStat
 ```
 
 
+## 2.
+```{r}
+yearStat <- offCleanStat %>% group_by(Name,stat) %>% summarise(overall = sum(count))
+```
 
 
-
-
+## 3.
+```{r}
+ggplot(aes(x = overall), data=yearStat) + geom_histogram(bins = 30) + facet_wrap(~stat, scales = "free_x")
+```
+There is only one player with any passing statistics, Brock Purdy, and for most stats the majority of players are towards the lower ends of each stat, with only a few getting larger stats in each statistic. This makes sense since for each position, only a few players will get a chance to rack up stats.
 
 ## 4.
+```{r}
+oVo <- offCleanStat %>% group_by(Opponent_Opponent) %>% 
+  filter(stat=="Receiving_YDS", (Opponent_Opponent=="Oklahoma" & gameNum==2) | Opponent_Opponent=="Oregon") %>% 
+  select(Opponent_Opponent,count, Name)
+oVo <- oVo %>% pivot_wider(names_from = Opponent_Opponent,values_from = count)
+oVo %>% ggplot(aes(x=Oklahoma, y=Oregon))+geom_point() + xlab("Receiving Yards vs. Oklahoma") + ylab("Receiving yards vs. Oregon")
+```
+ISU had a better offense vs. Oklahoma compared to Oregon. More players got more yards playing against Oklahoma compared to against Oregon.
+
+## 5.
 ```{r}
 bioClean <- bioClean %>% separate(Hometown, c('homeCity', 'homeState'), ",")
 ```
 
-## 5.
+
+## 6.
 ```{r}
 bioClean %>% count(homeState)
 ```
 
+## 7.
+```{r}
+purdy <- offClean %>% filter(Name=="Purdy, Brock") %>% select(Rushing_YDS,Passing_YDS,Opponent_Opponent,gameNum)
 
+teamRec <- offCleanStat %>% filter(stat=="Receiving_YDS") %>% group_by(Opponent_Opponent,gameNum) %>%
+  summarise(teamreceiving=sum(count))
 
+teamRus <- offCleanStat %>% filter(stat=="Rushing_YDS") %>% group_by(Opponent_Opponent,gameNum) %>% 
+  summarise(teamrushing=sum(count))
+
+teamTack <- defClean %>% group_by(Opponent_Opponent,gameNum) %>% summarise(teamtackles=sum(Tackles_Solo))
+
+teamSack <- defClean %>% group_by(Opponent_Opponent,gameNum) %>% summarise(teamsacks=sum(Tackles_Sack))
+
+purdyVteam <- purdy %>% inner_join(teamRec, by = c("Opponent_Opponent","gameNum")) %>% 
+  inner_join(teamRus, by = c("Opponent_Opponent","gameNum")) %>% 
+  inner_join(teamTack, by = c("Opponent_Opponent","gameNum")) %>% 
+  inner_join(teamSack, by = c("Opponent_Opponent","gameNum"))
+purdyVteam
+```
+Brock Purdy's passing yards, and the team receiving yards are almost equal in every game so that data is not that important for this analysis. When Brock Purdy is passing the ball well, the team rushing yards tends to go down as the passing yards go up, especially once the passing yards surpasses 300 yards, and when passing yards are low on the day rushing yards tends to either be larger or equal to passing yards. When Purdy has a large number of passing yards the defense tends to have less tackles and less sacks. This makes sense since if the offense is doing well then the defense will be playing less of the game, and have less chances for tackles or sacks.
